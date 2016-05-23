@@ -11,7 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
+
 import master.flame.danmaku.danmaku.util.SystemClock;
+
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -53,29 +55,30 @@ import master.flame.danmaku.danmaku.util.IOUtils;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private IDanmakuView mDanmakuView;
 
     private View mMediaController;
 
     public PopupWindow mPopupWindow;
 
-    private Button mBtnRotate;
+    private Button mBtnRotate;//旋转
 
-    private Button mBtnHideDanmaku;
+    private Button mBtnHideDanmaku;//隐藏弹幕
 
-    private Button mBtnShowDanmaku;
+    private Button mBtnShowDanmaku;//显示弹幕
 
-    private BaseDanmakuParser mParser;
+    private BaseDanmakuParser mParser;//弹幕内容解析器
 
-    private Button mBtnPauseDanmaku;
+    private Button mBtnPauseDanmaku;//暂停弹幕
 
-    private Button mBtnResumeDanmaku;
+    private Button mBtnResumeDanmaku;//重启弹幕
 
-    private Button mBtnSendDanmaku;
+    private Button mBtnSendDanmaku;//发送弹幕（纯文字）
 
-    private Button mBtnSendDanmakuTextAndImage;
+    private Button mBtnSendDanmakuTextAndImage;//发送弹幕（图文）
 
-    private Button mBtnSendDanmakus;
+    private Button mBtnSendDanmakus;//定时发送弹幕
     private DanmakuContext mContext;
     private BaseCacheStuffer.Proxy mCacheStufferAdapter = new BaseCacheStuffer.Proxy() {
 
@@ -92,7 +95,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         String url = "http://www.bilibili.com/favicon.ico";
                         InputStream inputStream = null;
                         Drawable drawable = mDrawable;
-                        if(drawable == null) {
+                        if (drawable == null) {
                             try {
                                 URLConnection urlConnection = new URL(url).openConnection();
                                 inputStream = urlConnection.getInputStream();
@@ -110,7 +113,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             drawable.setBounds(0, 0, 100, 100);
                             SpannableStringBuilder spannable = createSpannable(drawable);
                             danmaku.text = spannable;
-                            if(mDanmakuView != null) {
+                            if (mDanmakuView != null) {
+                                Log.e(TAG, "invalidateDanmaku");
                                 mDanmakuView.invalidateDanmaku(danmaku, false);
                             }
                             return;
@@ -210,20 +214,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // DanmakuView
 
         // 设置最大显示行数
-        HashMap<Integer, Integer> maxLinesPair = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> maxLinesPair = new HashMap<>();
         maxLinesPair.put(BaseDanmaku.TYPE_SCROLL_RL, 5); // 滚动弹幕最大显示5行
         // 设置是否禁止重叠
-        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<Integer, Boolean>();
+        HashMap<Integer, Boolean> overlappingEnablePair = new HashMap<>();
         overlappingEnablePair.put(BaseDanmaku.TYPE_SCROLL_RL, true);
         overlappingEnablePair.put(BaseDanmaku.TYPE_FIX_TOP, true);
 
         mDanmakuView = (IDanmakuView) findViewById(R.id.sv_danmaku);
         mContext = DanmakuContext.create();
         mContext.setDanmakuStyle(IDisplayer.DANMAKU_STYLE_STROKEN, 3).setDuplicateMergingEnabled(false).setScrollSpeedFactor(1.2f).setScaleTextSize(1.2f)
-        .setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter) // 图文混排使用SpannedCacheStuffer
+                .setCacheStuffer(new SpannedCacheStuffer(), mCacheStufferAdapter) // 图文混排使用SpannedCacheStuffer
 //        .setCacheStuffer(new BackgroundCacheStuffer())  // 绘制背景使用BackgroundCacheStuffer
-        .setMaximumLines(maxLinesPair)
-        .preventOverlapping(overlappingEnablePair);
+                .setMaximumLines(maxLinesPair)
+                .preventOverlapping(overlappingEnablePair);
         if (mDanmakuView != null) {
             mParser = createParser(this.getResources().openRawResource(R.raw.comments));
             mDanmakuView.setCallback(new master.flame.danmaku.controller.DrawHandler.Callback() {
@@ -372,9 +376,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 SystemClock.sleep(20);
             }
         }
-    };
+    }
 
     private void addDanmaku(boolean islive) {
+        Log.e(TAG, "addDanmaku");
         BaseDanmaku danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
         if (danmaku == null || mDanmakuView == null) {
             return;
@@ -398,7 +403,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void addDanmaKuShowTextAndImage(boolean islive) {
         BaseDanmaku danmaku = mContext.mDanmakuFactory.createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
         Drawable drawable = getResources().getDrawable(R.drawable.ic_launcher);
-        drawable.setBounds(0, 0, 100, 100);
+        if (drawable != null) {
+            drawable.setBounds(0, 0, 100, 100);
+        }
         SpannableStringBuilder spannable = createSpannable(drawable);
         danmaku.text = spannable;
         danmaku.padding = 5;
