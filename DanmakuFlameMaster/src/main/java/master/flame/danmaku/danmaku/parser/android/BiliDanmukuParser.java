@@ -18,6 +18,7 @@ package master.flame.danmaku.danmaku.parser.android;
 
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +32,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import java.io.IOException;
 import java.util.Locale;
 
+import master.flame.danmaku.danmaku.loader.android.BiliDanmakuLoader;
 import master.flame.danmaku.danmaku.model.AlphaValue;
 import master.flame.danmaku.danmaku.model.BaseDanmaku;
 import master.flame.danmaku.danmaku.model.Duration;
@@ -41,6 +43,8 @@ import master.flame.danmaku.danmaku.model.android.DanmakuFactory;
 import master.flame.danmaku.danmaku.util.DanmakuUtils;
 
 public class BiliDanmukuParser extends BaseDanmakuParser {
+
+    private static final String TAG = BiliDanmukuParser.class.getSimpleName();
 
     static {
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
@@ -71,6 +75,9 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
         return null;
     }
 
+    /**
+     * 解析弹幕XML
+     */
     public class XmlContentHandler extends DefaultHandler {
 
         private static final String TRUE_STRING = "true";
@@ -96,6 +103,7 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
         public void endDocument() throws SAXException {
             completed = true;
         }
+
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -147,13 +155,14 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
         }
 
         @Override
-        public void characters(char[] ch, int start, int length)  {
+        public void characters(char[] ch, int start, int length) {
             if (item != null) {
                 DanmakuUtils.fillText(item, decodeXmlString(new String(ch, start, length)));
                 item.index = index++;
 
                 // initial specail danmaku data
                 String text = String.valueOf(item.text).trim();
+                Log.e(TAG, "text " + text);
                 if (item.getType() == BaseDanmaku.TYPE_SPECIAL && text.startsWith("[")
                         && text.endsWith("]")) {
                     //text = text.substring(1, text.length() - 1);
@@ -161,7 +170,7 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
                     try {
                         JSONArray jsonArray = new JSONArray(text);
                         textArr = new String[jsonArray.length()];
-                        for(int i=0;i<textArr.length;i++){
+                        for (int i = 0; i < textArr.length; i++) {
                             textArr[i] = jsonArray.getString(i);
                         }
                     } catch (JSONException e) {
@@ -194,10 +203,10 @@ public class BiliDanmukuParser extends BaseDanmakuParser {
                     if (textArr.length >= 11) {
                         endX = Float.parseFloat(textArr[7]);
                         endY = Float.parseFloat(textArr[8]);
-                        if(!"".equals(textArr[9])){
+                        if (!"".equals(textArr[9])) {
                             translationDuration = Integer.parseInt(textArr[9]);
                         }
-                        if(!"".equals(textArr[10])){
+                        if (!"".equals(textArr[10])) {
                             translationStartDelay = (long) (Float.parseFloat(textArr[10]));
                         }
                     }

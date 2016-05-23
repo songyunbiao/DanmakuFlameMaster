@@ -39,14 +39,16 @@ public class BiliDanmakuLoader implements ILoader {
         return _instance;
     }
 
+    @Override
     public void load(String uri) throws IllegalDataException {
-        try {            
+        try {
             dataSource = new AndroidFileSource(uri);
         } catch (Exception e) {
-        	throw new IllegalDataException(e);
+            throw new IllegalDataException(e);
         }
     }
 
+    @Override
     public void load(InputStream stream) {
         dataSource = new AndroidFileSource(stream);
     }

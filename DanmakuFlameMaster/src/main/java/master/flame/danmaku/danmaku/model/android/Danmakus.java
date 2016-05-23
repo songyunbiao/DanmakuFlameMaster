@@ -80,7 +80,7 @@ public class Danmakus implements IDanmakus {
         } else if (sortType == ST_BY_YPOS_DESC) {
             comparator = new YPosDescComparator(duplicateMergingEnabled);
         }
-        if(sortType == ST_BY_LIST) {
+        if (sortType == ST_BY_LIST) {
             items = new ArrayList<BaseDanmaku>();
         } else {
             mDuplicateMergingEnabled = duplicateMergingEnabled;
@@ -106,8 +106,7 @@ public class Danmakus implements IDanmakus {
             this.items.clear();
             this.items.addAll(items);
             items = this.items;
-        }
-        else {
+        } else {
             this.items = items;
         }
         if (items instanceof List) {
@@ -191,7 +190,7 @@ public class Danmakus implements IDanmakus {
             return null;
         }
         if (subItems == null) {
-            if(mSortType == ST_BY_LIST) {
+            if (mSortType == ST_BY_LIST) {
                 subItems = new Danmakus(Danmakus.ST_BY_LIST);
                 subItems.setItems(items);
             } else {
@@ -265,13 +264,13 @@ public class Danmakus implements IDanmakus {
         return null;
     }
 
-    private class DanmakuIterator implements IDanmakuIterator{
+    private class DanmakuIterator implements IDanmakuIterator {
 
         private Collection<BaseDanmaku> mData;
         private Iterator<BaseDanmaku> it;
         private boolean mIteratorUsed;
 
-        public DanmakuIterator(Collection<BaseDanmaku> datas){
+        public DanmakuIterator(Collection<BaseDanmaku> datas) {
             setDatas(datas);
         }
 
@@ -287,7 +286,7 @@ public class Danmakus implements IDanmakus {
             mIteratorUsed = false;
         }
 
-        public synchronized void setDatas(Collection<BaseDanmaku> datas){
+        public synchronized void setDatas(Collection<BaseDanmaku> datas) {
             if (mData != datas) {
                 mIteratorUsed = false;
                 it = null;

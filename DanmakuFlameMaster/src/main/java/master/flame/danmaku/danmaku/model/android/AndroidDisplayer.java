@@ -243,6 +243,7 @@ public class AndroidDisplayer extends AbsDisplayer<Canvas, Typeface> {
 
     @Override
     public int draw(BaseDanmaku danmaku) {
+
         float top = danmaku.getTop();
         float left = danmaku.getLeft();
         if (canvas != null) {

@@ -167,7 +167,7 @@ public class CacheManagingDrawTask extends DrawTask {
     public class CacheManager implements ICacheManager {
 
         @SuppressWarnings("unused")
-        private static final String TAG = "CacheManager";
+        public final String TAG = CacheManager.class.getSimpleName();
         public static final byte RESULT_SUCCESS = 0;
         public static final byte RESULT_FAILED = 1;
         public static final byte RESULT_FAILED_OVERSIZE = 2;
